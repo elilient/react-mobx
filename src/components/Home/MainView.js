@@ -49,22 +49,17 @@ export default class MainView extends React.Component {
     this.props.filmsStore.setPredicate(this.getPredicate());
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    localStorage.setItem()
-  }
 
   componentDidMount() {
     this.props.filmsStore.loadFilms();
-    console.log(this.props.filmsStore.loadFilms());
   }
 
   componentDidUpdate(previousProps) {
+    const filmslist = JSON.parse(localStorage.getItem('filmslist'))
     if (
-      this.getTab(this.props) !== this.getTab(previousProps) ||
-      this.getTag(this.props) !== this.getTag(previousProps)
+        filmslist && filmslist.length !== this.props.filmsStore.films.length
     ) {
-      this.props.filmsStore.setPredicate(this.getPredicate());
-      this.props.filmsStore.loadFilms();
+      localStorage.setItem('filmslist', JSON.stringify(this.props.filmsStore.films))
     }
   }
 
@@ -97,6 +92,7 @@ export default class MainView extends React.Component {
   render() {
     const { currentUser } = this.props.userStore;
     const { films, isLoading, page, totalPagesCount } = this.props.filmsStore;
+
 
     return (
       <div className="col-md-9">
