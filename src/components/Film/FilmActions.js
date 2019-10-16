@@ -2,15 +2,15 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 
 const FilmActions = props => {
-  const article = props.article;
-  const handleDelete = () => props.onDelete(article.slug);
+  const film = props.film;
+  const handleDelete = () => props.onDelete(film.slug);
 
   if (props.canModify) {
     return (
       <span>
 
         <Link
-          to={`/editor/${article.slug}`}
+          to={`/editor/${film.slug}`}
           className="btn btn-outline-secondary btn-sm"
         >
           <i className="ion-edit" /> Edit Film

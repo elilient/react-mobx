@@ -8,20 +8,20 @@ export class FilmsStore {
   @observable isLoading = false;
   @observable page = 0;
   @observable totalPagesCount = 0;
-  @observable articlesRegistry = observable.map();
+  @observable filmsRegistry = observable.map();
   @observable predicate = {};
 
-  @computed get articles() {
-    return this.articlesRegistry.values();
+  @computed get films() {
+    return this.filmsRegistry.values();
   };
 
   clear() {
-    this.articlesRegistry.clear();
+    this.filmsRegistry.clear();
     this.page = 0;
   }
 
   getFilm(slug) {
-    return this.articlesRegistry.get(slug);
+    return this.filmsRegistry.get(slug);
   }
 
   @action setPage(page) {
@@ -46,37 +46,37 @@ export class FilmsStore {
   @action loadFilms() {
     this.isLoading = true;
     return this.$req()
-      .then(action(({ articles, articlesCount }) => {
-        this.articlesRegistry.clear();
-        articles.forEach(article => this.articlesRegistry.set(article.slug, article));
-        this.totalPagesCount = Math.ceil(articlesCount / LIMIT);
+      .then(action(({ films, filmsCount }) => {
+        this.filmsRegistry.clear();
+        films.forEach(film => this.filmsRegistry.set(film.slug, film));
+        this.totalPagesCount = Math.ceil(filmsCount / LIMIT);
       }))
       .finally(action(() => { this.isLoading = false; }));
   }
 
   @action loadFilm(slug, { acceptCached = false } = {}) {
     if (acceptCached) {
-      const article = this.getFilm(slug);
-      if (article) return Promise.resolve(article);
+      const film = this.getFilm(slug);
+      if (film) return Promise.resolve(film);
     }
     this.isLoading = true;
     return agent.Films.get(slug)
-      .then(action(({ article }) => {
-        this.articlesRegistry.set(article.slug, article);
-        return article;
+      .then(action(({ film }) => {
+        this.filmsRegistry.set(film.slug, film);
+        return film;
       }))
       .finally(action(() => { this.isLoading = false; }));
   }
 
   @action makeFavorite(slug) {
-    const article = this.getFilm(slug);
-    if (article && !article.favorited) {
-      article.favorited = true;
-      article.favoritesCount++;
+    const film = this.getFilm(slug);
+    if (film && !film.favorited) {
+      film.favorited = true;
+      film.favoritesCount++;
       return agent.Films.favorite(slug)
         .catch(action(err => {
-          article.favorited = false;
-          article.favoritesCount--;
+          film.favorited = false;
+          film.favoritesCount--;
           throw err;
         }));
     }
@@ -84,38 +84,38 @@ export class FilmsStore {
   }
 
   @action unmakeFavorite(slug) {
-    const article = this.getFilm(slug);
-    if (article && article.favorited) {
-      article.favorited = false;
-      article.favoritesCount--;
+    const film = this.getFilm(slug);
+    if (film && film.favorited) {
+      film.favorited = false;
+      film.favoritesCount--;
       return agent.Films.unfavorite(slug)
         .catch(action(err => {
-          article.favorited = true;
-          article.favoritesCount++;
+          film.favorited = true;
+          film.favoritesCount++;
           throw err;
         }));
     }
     return Promise.resolve();
   }
 
-  @action createFilm(article) {
-    return agent.Films.create(article)
-      .then(({ article }) => {
-        this.articlesRegistry.set(article.slug, article);
-        return article;
+  @action createFilm(film) {
+    return agent.Films.create(film)
+      .then(({ film }) => {
+        this.filmsRegistry.set(film.slug, film);
+        return film;
       })
   }
 
   @action updateFilm(data) {
     return agent.Films.update(data)
-      .then(({ article }) => {
-        this.articlesRegistry.set(article.slug, article);
-        return article;
+      .then(({ film }) => {
+        this.filmsRegistry.set(film.slug, film);
+        return film;
       })
   }
 
   @action deleteFilm(slug) {
-    this.articlesRegistry.delete(slug);
+    this.filmsRegistry.delete(slug);
     return agent.Films.del(slug)
       .catch(action(err => { this.loadFilms(); throw err; }));
   }

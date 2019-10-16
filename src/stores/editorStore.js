@@ -1,34 +1,34 @@
 import { observable, action } from 'mobx';
-import articlesStore from './articlesStore';
+import filmsStore from './filmsStore';
 
 class EditorStore {
 
   @observable inProgress = false;
   @observable errors = undefined;
-  @observable articleSlug = undefined;
+  @observable filmSlug = undefined;
 
   @observable title = '';
   @observable description = '';
   @observable body = '';
   @observable tagList = [];
 
-  @action setFilmSlug(articleSlug) {
-    if (this.articleSlug !== articleSlug) {
+  @action setFilmSlug(filmSlug) {
+    if (this.filmSlug !== filmSlug) {
       this.reset();
-      this.articleSlug = articleSlug;
+      this.filmSlug = filmSlug;
     }
   }
 
   @action loadInitialData() {
-    if (!this.articleSlug) return Promise.resolve();
+    if (!this.filmSlug) return Promise.resolve();
     this.inProgress = true;
-    return articlesStore.loadFilm(this.articleSlug, { acceptCached: true })
-      .then(action((article) => {
-        if (!article) throw new Error('Can\'t load original article');
-        this.title = article.title;
-        this.description = article.description;
-        this.body = article.body;
-        this.tagList = article.tagList;
+    return filmsStore.loadFilm(this.filmSlug, { acceptCached: true })
+      .then(action((film) => {
+        if (!film) throw new Error('Can\'t load original film');
+        this.title = film.title;
+        this.description = film.description;
+        this.body = film.body;
+        this.tagList = film.tagList;
       }))
       .finally(action(() => { this.inProgress = false; }));
   }
@@ -64,14 +64,14 @@ class EditorStore {
   @action submit() {
     this.inProgress = true;
     this.errors = undefined;
-    const article = {
+    const film = {
       title: this.title,
       description: this.description,
       body: this.body,
       tagList: this.tagList,
-      slug: this.articleSlug,
+      slug: this.filmSlug,
     };
-    return (this.articleSlug ? articlesStore.updateFilm(article) : articlesStore.createFilm(article))
+    return (this.filmSlug ? filmsStore.updateFilm(film) : filmsStore.createFilm(film))
       .catch(action((err) => {
         this.errors = err.response && err.response.body && err.response.body.errors; throw err;
       }))

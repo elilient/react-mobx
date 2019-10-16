@@ -7,7 +7,7 @@ import { Provider } from 'mobx-react';
 
 import App from './components/App';
 
-import articlesStore from './stores/articlesStore';
+import filmsStore from './stores/filmsStore';
 import commentsStore from './stores/commentsStore';
 import authStore from './stores/authStore';
 import commonStore from './stores/commonStore';
@@ -16,7 +16,7 @@ import userStore from './stores/userStore';
 import profileStore from './stores/profileStore';
 
 const stores = {
-  articlesStore,
+  filmsStore,
   commentsStore,
   authStore,
   commonStore,

@@ -7,19 +7,19 @@ import RedError from '../RedError';
 import marked from 'marked';
 
 
-@inject('articlesStore', 'userStore', 'commentsStore')
+@inject('filmsStore', 'userStore', 'commentsStore')
 @withRouter
 @observer
 export default class Film extends React.Component {
   componentDidMount() {
     const slug = this.props.match.params.id;
-    this.props.articlesStore.loadFilm(slug, { acceptCached: true });
+    this.props.filmsStore.loadFilm(slug, { acceptCached: true });
     this.props.commentsStore.setFilmSlug(slug);
     this.props.commentsStore.loadComments();
   }
 
   handleDeleteFilm = slug => {
-    this.props.articlesStore.deleteFilm(slug)
+    this.props.filmsStore.deleteFilm(slug)
       .then(() => this.props.history.replace('/'));
   };
 
@@ -31,21 +31,21 @@ export default class Film extends React.Component {
     const slug = this.props.match.params.id;
     const { currentUser } = this.props.userStore;
     const { comments, commentErrors } = this.props.commentsStore;
-    const article = this.props.articlesStore.getFilm(slug);
+    const film = this.props.filmsStore.getFilm(slug);
 
-    if (!article) return <RedError message="Can't load article" />;
+    if (!film) return <RedError message="Can't load film" />;
 
-    const markup = { __html: marked(article.body, { sanitize: true }) };
-    const canModify = currentUser && currentUser.username === article.author.username;
+    const markup = { __html: marked(film.body, { sanitize: true }) };
+    const canModify = currentUser && currentUser.username === film.author.username;
     return (
-      <div className="article-page">
+      <div className="film-page">
 
         <div className="banner">
           <div className="container">
 
-            <h1>{article.title}</h1>
+            <h1>{film.title}</h1>
             <FilmMeta
-              article={article}
+              film={film}
               canModify={canModify}
               onDelete={this.handleDeleteFilm}
             />
@@ -54,14 +54,14 @@ export default class Film extends React.Component {
 
         <div className="container page">
 
-          <div className="row article-content">
+          <div className="row film-content">
             <div className="col-xs-12">
 
               <div dangerouslySetInnerHTML={markup} />
 
               <ul className="tag-list">
                 {
-                  article.tagList.map(tag => {
+                  film.tagList.map(tag => {
                     return (
                       <li
                         className="tag-default tag-pill tag-outline"
@@ -79,7 +79,7 @@ export default class Film extends React.Component {
 
           <hr />
 
-          <div className="article-actions" />
+          <div className="film-actions" />
 
           <div className="row">
             <CommentContainer

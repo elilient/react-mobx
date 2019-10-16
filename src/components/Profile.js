@@ -52,24 +52,24 @@ const FollowUserButton = props => {
 };
 
 
-@inject('articlesStore', 'profileStore', 'userStore')
+@inject('filmsStore', 'profileStore', 'userStore')
 @withRouter
 @observer
 export default class Profile extends React.Component {
   componentWillMount() {
-    this.props.articlesStore.setPredicate(this.getPredicate());
+    this.props.filmsStore.setPredicate(this.getPredicate());
   }
 
   componentDidMount() {
     this.props.profileStore.loadProfile(this.props.match.params.username);
-    this.props.articlesStore.loadFilms();
+    this.props.filmsStore.loadFilms();
   }
 
   componentDidUpdate(previousProps) {
     if (this.props.location !== previousProps.location) {
       this.props.profileStore.loadProfile(this.props.match.params.username);
-      this.props.articlesStore.setPredicate(this.getPredicate());
-      this.props.articlesStore.loadFilms();
+      this.props.filmsStore.setPredicate(this.getPredicate());
+      this.props.filmsStore.loadFilms();
     }
   }
 
@@ -89,8 +89,8 @@ export default class Profile extends React.Component {
   handleUnfollow = () => this.props.profileStore.unfollow();
 
   handleSetPage = page => {
-    this.props.articlesStore.setPage(page);
-    this.props.articlesStore.loadFilms();
+    this.props.filmsStore.setPage(page);
+    this.props.filmsStore.loadFilms();
   };
 
   renderTabs() {
@@ -124,7 +124,7 @@ export default class Profile extends React.Component {
   }
 
   render() {
-    const { profileStore, articlesStore, userStore } = this.props;
+    const { profileStore, filmsStore, userStore } = this.props;
     const { profile, isLoadingProfile } = profileStore;
     const { currentUser } = userStore;
 
@@ -164,15 +164,15 @@ export default class Profile extends React.Component {
 
             <div className="col-xs-12 col-md-10 offset-md-1">
 
-              <div className="articles-toggle">
+              <div className="films-toggle">
                 {this.renderTabs()}
               </div>
 
               <FilmList
-                articles={articlesStore.articles}
-                totalPagesCount={articlesStore.totalPagesCount}
+                films={filmsStore.films}
+                totalPagesCount={filmsStore.totalPagesCount}
                 onSetPage={this.handleSetPage}
-                loading={articlesStore.isLoading}
+                loading={filmsStore.isLoading}
               />
             </div>
 

@@ -4,23 +4,23 @@ import React from 'react';
 import { observer } from 'mobx-react';
 
 const FilmMeta = observer(props => {
-  const article = props.article;
+  const film = props.film;
   return (
-    <div className="article-meta">
-      <Link to={`/@${article.author.username}`}>
-        <img src={article.author.image} alt="" />
+    <div className="film-meta">
+      <Link to={`/@${film.author.username}`}>
+        <img src={film.author.image} alt="" />
       </Link>
 
       <div className="info">
-        <Link to={`/@${article.author.username}`} className="author">
-          {article.author.username}
+        <Link to={`/@${film.author.username}`} className="author">
+          {film.author.username}
         </Link>
         <span className="date">
-          {new Date(article.createdAt).toDateString()}
+          {new Date(film.createdAt).toDateString()}
         </span>
       </div>
 
-      <FilmActions canModify={props.canModify} article={article} onDelete={props.onDelete} />
+      <FilmActions canModify={props.canModify} film={film} onDelete={props.onDelete} />
     </div>
   );
 });

@@ -3,17 +3,19 @@ import ListPagination from './ListPagination';
 import LoadingSpinner from './LoadingSpinner';
 import React from 'react';
 
+
 const FilmList = props => {
-  if (props.loading && props.articles.length === 0) {
+
+  if (props.loading && props.films.length === 0) {
     return (
       <LoadingSpinner />
     );
   }
 
-  if (props.articles.length === 0) {
+  if (props.films.length === 0) {
     return (
-      <div className="article-preview">
-        No articles are here... yet.
+      <div className="film-preview">
+        No films are here... yet.
       </div>
     );
   }
@@ -21,9 +23,9 @@ const FilmList = props => {
   return (
     <div>
       {
-        props.articles.map(article => {
+        props.films.map(film => {
           return (
-            <FilmPreview article={article} key={article.slug} />
+            <FilmPreview film={film} key={film.slug} />
           );
         })
       }

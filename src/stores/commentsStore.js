@@ -6,20 +6,20 @@ export class CommentsStore {
   @observable isCreatingComment = false;
   @observable isLoadingComments = false;
   @observable commentErrors = undefined;
-  @observable articleSlug = undefined;
+  @observable filmSlug = undefined;
   @observable comments = [];
 
-  @action setFilmSlug(articleSlug) {
-    if (this.articleSlug !== articleSlug) {
+  @action setFilmSlug(filmSlug) {
+    if (this.filmSlug !== filmSlug) {
       this.comments = [];
-      this.articleSlug = articleSlug;
+      this.filmSlug = filmSlug;
     }
   }
 
   @action loadComments() {
     this.isLoadingComments = true;
     this.commentErrors = undefined;
-    return agent.Comments.forFilm(this.articleSlug)
+    return agent.Comments.forFilm(this.filmSlug)
       .then(action(({ comments }) => { this.comments = comments; }))
       .catch(action(err => {
         this.commentErrors = err.response && err.response.body && err.response.body.errors;
@@ -31,7 +31,7 @@ export class CommentsStore {
 
   @action createComment(comment) {
     this.isCreatingComment = true;
-    return agent.Comments.create(this.articleSlug, comment)
+    return agent.Comments.create(this.filmSlug, comment)
       .then(() => this.loadComments())
       .finally(action(() => { this.isCreatingComment = false; }));
   }
@@ -39,7 +39,7 @@ export class CommentsStore {
   @action deleteComment(id) {
     const idx = this.comments.findIndex(c => c.id === id);
     if (idx > -1) this.comments.splice(idx, 1);
-    return agent.Comments.delete(this.articleSlug, id)
+    return agent.Comments.delete(this.filmSlug, id)
       .catch(action(err => { this.loadComments(); throw err }));
   }
 }

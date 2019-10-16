@@ -39,7 +39,7 @@ export default class App extends React.Component {
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/editor/:slug?" component={Editor} />
-            <Route path="/article/:id" component={Film} />
+            <Route path="/film/:id" component={Film} />
             <PrivateRoute path="/settings" component={Settings} />
             <Route path="/@:username" component={Profile} />
             <Route path="/@:username/favorites" component={Profile} />

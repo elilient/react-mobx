@@ -62,9 +62,9 @@ export default class Editor extends React.Component {
     ev.preventDefault();
     const { editorStore } = this.props;
     editorStore.submit()
-      .then(article => {
+      .then(film => {
         editorStore.reset();
-        this.props.history.replace(`/article/${article.slug}`)
+        this.props.history.replace(`/film/${film.slug}`)
       });
   };
 
@@ -103,8 +103,8 @@ export default class Editor extends React.Component {
                   <fieldset className="form-group">
                     <input
                       className="form-control"
-                      type="text"
-                      placeholder="What's this article about?"
+                      type="date"
+                      placeholder="What's this film about?"
                       value={description}
                       onChange={this.changeDescription}
                       disabled={inProgress}
@@ -115,7 +115,7 @@ export default class Editor extends React.Component {
                     <textarea
                       className="form-control"
                       rows="8"
-                      placeholder="Write your article (in markdown)"
+                      placeholder="Write your film (in markdown)"
                       value={body}
                       onChange={this.changeBody}
                       disabled={inProgress}

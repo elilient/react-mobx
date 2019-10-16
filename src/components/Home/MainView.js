@@ -4,28 +4,6 @@ import { inject, observer } from 'mobx-react';
 import { withRouter, NavLink } from 'react-router-dom'
 import { parse as qsParse } from 'query-string';
 
-const YourFeedTab = props => {
-  if (props.currentUser) {
-    return (
-      <li className="nav-item">
-      <NavLink
-          className="nav-link"
-          isActive={
-            (match, location) => {
-              return location.search.match("tab=feed") ? 1 : 0;
-            }
-          }
-          to={`/@${props.currentUser.username}/favorites`}
-        >
-          Your Feed
-        </NavLink>
-      </li>
-    );
-  }
-  return null;
-};
-
-
 
 const GlobalFeedTab = props => {
   return (
@@ -62,17 +40,22 @@ const TagFilterTab = props => {
   );
 };
 
-@inject('articlesStore', 'commonStore', 'userStore')
+@inject('filmsStore', 'commonStore', 'userStore')
 @withRouter
 @observer
 export default class MainView extends React.Component {
 
   componentWillMount() {
-    this.props.articlesStore.setPredicate(this.getPredicate());
+    this.props.filmsStore.setPredicate(this.getPredicate());
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    localStorage.setItem()
   }
 
   componentDidMount() {
-    this.props.articlesStore.loadFilms();
+    this.props.filmsStore.loadFilms();
+    console.log(this.props.filmsStore.loadFilms());
   }
 
   componentDidUpdate(previousProps) {
@@ -80,8 +63,8 @@ export default class MainView extends React.Component {
       this.getTab(this.props) !== this.getTab(previousProps) ||
       this.getTag(this.props) !== this.getTag(previousProps)
     ) {
-      this.props.articlesStore.setPredicate(this.getPredicate());
-      this.props.articlesStore.loadFilms();
+      this.props.filmsStore.setPredicate(this.getPredicate());
+      this.props.filmsStore.loadFilms();
     }
   }
 
@@ -107,24 +90,18 @@ export default class MainView extends React.Component {
   };
 
   handleSetPage = page => {
-    this.props.articlesStore.setPage(page);
-    this.props.articlesStore.loadFilms();
+    this.props.filmsStore.setPage(page);
+    this.props.filmsStore.loadFilms();
   };
 
   render() {
     const { currentUser } = this.props.userStore;
-    const { articles, isLoading, page, totalPagesCount } = this.props.articlesStore;
+    const { films, isLoading, page, totalPagesCount } = this.props.filmsStore;
 
     return (
       <div className="col-md-9">
         <div className="feed-toggle">
           <ul className="nav nav-pills outline-active">
-
-            <YourFeedTab
-              currentUser={currentUser}
-              tab={this.getTab()}
-            />
-
             <GlobalFeedTab
               tab={this.getTab()}
             />
@@ -135,7 +112,7 @@ export default class MainView extends React.Component {
         </div>
 
         <FilmList
-          articles={articles}
+          films={films}
           loading={isLoading}
           totalPagesCount={totalPagesCount}
           currentPage={page}
