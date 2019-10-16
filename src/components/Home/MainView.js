@@ -45,21 +45,31 @@ const TagFilterTab = props => {
 @observer
 export default class MainView extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {films:[]}
+  }
+
   componentWillMount() {
     this.props.filmsStore.setPredicate(this.getPredicate());
   }
 
 
   componentDidMount() {
-    this.props.filmsStore.loadFilms();
+    const storageFilmList = JSON.parse(localStorage.getItem('filmslist'));
+    if(storageFilmList && storageFilmList.length) {
+      this.setState({films: storageFilmList})
+    } else {
+      this.props.filmsStore.loadFilms();
+    }
   }
 
-  componentDidUpdate(previousProps) {
-    const filmslist = JSON.parse(localStorage.getItem('filmslist'))
-    if (
-        filmslist && filmslist.length !== this.props.filmsStore.films.length
-    ) {
-      localStorage.setItem('filmslist', JSON.stringify(this.props.filmsStore.films))
+  componentDidUpdate() {
+    const { filmsStore } = this.props;
+    const storageFilmList = JSON.parse(localStorage.getItem('filmslist'));
+    if (filmsStore && filmsStore.films.length !== storageFilmList && storageFilmList.length) {
+      localStorage.setItem('filmslist', JSON.stringify(filmsStore.films))
+      this.setState({films: filmsStore.films});
     }
   }
 
@@ -108,7 +118,7 @@ export default class MainView extends React.Component {
         </div>
 
         <FilmList
-          films={films}
+          films={this.state.films}
           loading={isLoading}
           totalPagesCount={totalPagesCount}
           currentPage={page}
