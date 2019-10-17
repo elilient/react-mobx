@@ -49,13 +49,16 @@ export default class MainView extends React.Component {
     super(props);
     this.state = {films:[]}
   }
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+      return true
+  }
 
-  componentWillMount() {
+    componentWillMount() {
     this.props.filmsStore.setPredicate(this.getPredicate());
   }
 
-
   componentDidMount() {
+      console.log(this.state.films);
     const storageFilmList = JSON.parse(localStorage.getItem('filmslist'));
     if(storageFilmList && storageFilmList.length) {
       this.setState({films: storageFilmList})
@@ -67,7 +70,11 @@ export default class MainView extends React.Component {
   componentDidUpdate() {
     const { filmsStore } = this.props;
     const storageFilmList = JSON.parse(localStorage.getItem('filmslist'));
-    if (filmsStore && filmsStore.films.length !== storageFilmList && storageFilmList.length) {
+    const storageFilmListLength = storageFilmList ? storageFilmList.length : 0;
+    console.log(" LOG filmsStore: " + filmsStore);
+    console.log(" LOG filmsStore.films.length: " + filmsStore.films.length);
+    console.log(" LOG storageFilmListLength: " + storageFilmListLength);
+    if (filmsStore && filmsStore.films.length !== storageFilmListLength) {
       localStorage.setItem('filmslist', JSON.stringify(filmsStore.films))
       this.setState({films: filmsStore.films});
     }
@@ -100,8 +107,7 @@ export default class MainView extends React.Component {
   };
 
   render() {
-    const { currentUser } = this.props.userStore;
-    const { films, isLoading, page, totalPagesCount } = this.props.filmsStore;
+    const { isLoading, page, totalPagesCount } = this.props.filmsStore;
 
 
     return (
